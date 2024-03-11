@@ -1,6 +1,6 @@
 package src.main.bowling;
 
-import src.main.bowling.Record.Player;
+import src.main.bowling.record.Player;
 import src.main.bowling.io.Input;
 import src.main.bowling.io.Output;
 
@@ -15,7 +15,7 @@ public class Game {
     private final Input input = new Input();
     private final Output output = new Output();
 
-    public void start() {
+    public void execute() {
 
         int participantsNum = input.receiveParticipants();
         init(participantsNum);

@@ -1,6 +1,6 @@
 package src.main.bowling.io;
 
-import src.main.bowling.Record.Player;
+import src.main.bowling.record.Player;
 
 import java.util.List;
 

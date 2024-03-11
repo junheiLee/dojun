@@ -1,4 +1,4 @@
-package src.main.bowling.Record;
+package src.main.bowling.record;
 
 import java.util.ArrayList;
 import java.util.List;
