@@ -1,16 +1,10 @@
 package src.main.bowling.io;
 
+import src.main.bowling.Record.Round;
+
 public class Output {
 
-    private String boardForm = "";
-
-    public Output generateBoardForm(int participants) {
-
-        this.boardForm = BoardForm.generate(participants);
-        return this;
-    }
-
-    public void show() {
-        System.out.println(boardForm);
+    public void render(Round round) {
+        System.out.println(Board.render(round));
     }
 }
