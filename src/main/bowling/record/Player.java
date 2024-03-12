@@ -7,6 +7,7 @@ import java.util.List;
 public class Player {
 
     private static final List<Frame> frames;
+    private static Frame target;
 
     static {
         frames = new ArrayList<>();
@@ -22,53 +23,75 @@ public class Player {
 
     public void doAfterFrame(int currentIdx) {
 
-        int targetIdx = currentIdx;
-        Frame target = frames.get(targetIdx);
+        int targetIdx = selectTarget(currentIdx);
 
-        while (target.hasDelay()) {
-            target = frames.get(targetIdx - 1);
-            targetIdx--;
-        }
-
-        if (targetIdx != currentIdx) {
-
-            if (target.isSpare()) {
-                Frame next = frames.get(targetIdx + 1);
-                // 점수 입력(one)
-                target.calScore(next.getFirstPoint());
-                updateDelayAfter(targetIdx, 1);
-            } else {
-                if (!frames.get(targetIdx + 1).isStrike()) {
-                    Frame next = frames.get(targetIdx + 1);
-                    // 점수 입력(one, two)
-                    target.calScore(next.getFirstPoint(), next.getSecondPoint());
-                    updateDelayAfter(targetIdx, 1);
-                } else {
-                    if (targetIdx + 2 == currentIdx) {
-                        Frame next = frames.get(targetIdx + 1);
-                        // 점수 입력(one, one)
-                        target.calScore(next.getFirstPoint(), frames.get(targetIdx + 2).getFirstPoint());
-                        updateDelayAfter(targetIdx, 1);
-                    } else {
-                        updateDelayAfter(targetIdx, 2);
-                        return;
-                    }
-                }
-            }
-
-            doAfterFrame(currentIdx);
+        if (notNeedEnter(currentIdx, targetIdx)) {
+            updateDelayAfter(targetIdx, 2);
+            return;
         }
 
         if (targetIdx == currentIdx) {
-
-            if (target.isStrike() || target.isSpare()) {
-                updateDelayAfter(targetIdx, 1);
-            } else {
-                // 점수 입력
-                target.calScore();
-            }
+            enterCurrentScore(targetIdx);
+        } else {
+            enterPastScore(targetIdx);
+            doAfterFrame(currentIdx);
         }
+    }
 
+    private int selectTarget(int index) {
+
+        target = frames.get(index);
+
+        while (target.hasDelay()) {
+            target = getFrameAfter(index, -1);
+            index--;
+        }
+        return index;
+    }
+
+    private boolean notNeedEnter(int currentIdx, int targetIdx) {
+
+        return targetIdx == (currentIdx - 1)
+                && target.isStrike()
+                && getFrameAfter(currentIdx, 0).isStrike();
+    }
+
+    private void enterCurrentScore(int targetIdx) {
+        if (target.isStrike() || target.isSpare()) {
+            updateDelayAfter(targetIdx, 1);
+        } else {
+            target.calScore();
+        }
+    }
+
+    private void enterPastScore(int targetIdx) {
+        if (target.isSpare()) {
+            enterSpareScore(targetIdx);
+        } else {
+            enterStrikeScore(targetIdx);
+        }
+    }
+
+    private void enterSpareScore(int targetIdx) {
+        target.calScore(getFrameAfter(targetIdx, 1).getFirstPoint());
+        updateDelayAfter(targetIdx, 1);
+    }
+
+    private void enterStrikeScore(int targetIdx) {
+        if (!getFrameAfter(targetIdx, 1).isStrike()) {
+            target.calScore(getFrameAfter(targetIdx, 1).getFirstPoint(),
+                    getFrameAfter(targetIdx, 1).getSecondPoint());
+            updateDelayAfter(targetIdx, 1);
+
+        } else {
+            target.calScore(getFrameAfter(targetIdx, 1).getFirstPoint(),
+                    frames.get(targetIdx + 2).getFirstPoint());
+            updateDelayAfter(targetIdx, 1);
+        }
+    }
+
+    private Frame getFrameAfter(int idx, int step) {
+        return frames.get(idx + step);
     }
 
     private void updateDelayAfter(int idx, int step) {
