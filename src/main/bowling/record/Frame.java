@@ -2,9 +2,9 @@ package src.main.bowling.record;
 
 public class Frame {
 
-    private static final String GUTTER = "-";
-    private static final String SPARE = "/";
-    private static final String STRIKE = "X";
+    private static final String GUTTER_MARK = "-";
+    private static final String SPARE_MARK = "/";
+    private static final String STRIKE_MARK = "X";
 
     private int firstPoint;
     private int secondPoint;
@@ -18,11 +18,25 @@ public class Frame {
         score = -1;
     }
 
-    public void setFirstPoint(int point) {
-        this.firstPoint = point;
+    @Override
+    public String toString() {
+        return "Frame{" +
+                "firstPoint=" + firstPoint +
+                ", secondPoint=" + secondPoint +
+                ", hasDelay=" + hasDelay +
+                ", score=" + score +
+                '}';
     }
 
-    public int getFirstPoint() {
+    public void setFirstPoint(int point) {
+        this.firstPoint = point;
+
+        if (isStrike()) {
+            this.secondPoint = 0;
+        }
+    }
+
+    int getFirstPoint() {
         return firstPoint;
     }
 
@@ -30,37 +44,37 @@ public class Frame {
         this.secondPoint = point;
     }
 
-    public int getSecondPoint() {
+    int getSecondPoint() {
         return secondPoint;
     }
 
-    public void updateDelay() {
+    void updateDelay() {
         this.hasDelay = !hasDelay;
     }
 
-    public boolean hasDelay() {
+    boolean hasDelay() {
         return this.hasDelay;
     }
 
-    public void calScore() {
+    void calScore() {
         this.score = firstPoint + secondPoint;
     }
 
-    public void calScore(int bonus) {
+    protected void calScore(int bonus) {
         this.score = firstPoint + secondPoint + bonus;
     }
 
-    public void calScore(int firstBonus, int secondBonus) {
+    protected void calScore(int firstBonus, int secondBonus) {
         this.score = firstPoint + secondPoint + firstBonus + secondBonus;
     }
 
-    public boolean isSpare() {
+    boolean isSpare() {
         return isDone(firstPoint) && isDone(secondPoint)
                 && !isStrike()
                 && (firstPoint + secondPoint) == 10;
     }
 
-    public boolean isStrike() {
+    boolean isStrike() {
         return firstPoint == 10;
     }
 
@@ -73,9 +87,9 @@ public class Frame {
         if (!isDone(firstPoint)) {
             return " ";
         } else if (isGutter(firstPoint)) {
-            return GUTTER;
+            return GUTTER_MARK;
         } else if (isStrike()) {
-            return STRIKE;
+            return STRIKE_MARK;
         } else {
             return "" + firstPoint;
         }
@@ -86,23 +100,19 @@ public class Frame {
         if (!isDone(secondPoint)) {
             return " ";
         } else if (isGutter(secondPoint)) {
-            return GUTTER;
+            return GUTTER_MARK;
         } else if (isSpare()) {
-            return SPARE;
+            return SPARE_MARK;
         } else {
             return "" + secondPoint;
         }
     }
 
     public String convertScoreMark() {
-        if (isCompleted()) {
+        if (isDone(score)) {
             return "" + score;
         }
         return " ";
-    }
-
-    private boolean isCompleted() {
-        return isDone(score);
     }
 
     private boolean isDone(int point) {

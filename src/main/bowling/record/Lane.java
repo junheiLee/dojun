@@ -7,6 +7,9 @@ import java.util.List;
 public class Lane {
 
     private static final List<Frame> frames;
+    private static final int LAST_IDX = 9;
+    private static final int SECOND_LAST_IDX = 8;
+
     private static Frame target;
 
     static {
@@ -22,19 +25,56 @@ public class Lane {
     }
 
     public void doAfterFrame(int currentIdx) {
-        int targetIdx = selectTarget(currentIdx);
+        int targetIdx;
 
-        if (notNeedEnter(currentIdx, targetIdx)) {
-            updateDelayAfter(targetIdx, 2);
-            return;
+        while (isRunning(currentIdx, selectTarget(currentIdx))) {
+            targetIdx = frames.indexOf(target);
+
+            if (targetIdx == currentIdx) {
+                updateCurrentInfo(targetIdx);
+                break;
+
+            } else {
+                updatePastInfo(targetIdx);
+            }
         }
+        addBonusFrame(currentIdx);
+    }
 
-        if (targetIdx == currentIdx) {
-            enterCurrentScore(targetIdx);
+    public boolean hasBonusFrame() {
+        return frames.size() > 10;
+    }
+
+    public BonusFrame getBonusFrame() {
+        return (BonusFrame) frames.get(10);
+    }
+
+    public void doAfterBonusFrame() {
+        Frame bonusFrame = getBonusFrame();
+        Frame target = frames.get(LAST_IDX);
+
+        if (target.isSpare()) {
+            target.calScore(bonusFrame.getFirstPoint());
         } else {
-            enterPastScore(targetIdx);
-            doAfterFrame(currentIdx);
+            target.calScore(bonusFrame.getFirstPoint(), bonusFrame.getSecondPoint());
         }
+
+        if (target.hasDelay()) {
+            frames.get(SECOND_LAST_IDX).calScore(target.getFirstPoint(), bonusFrame.getFirstPoint());
+        }
+
+    }
+
+    private boolean isRunning(int currentIdx, int targetIdx) {
+
+        if (needSkip(currentIdx, targetIdx)) {
+
+            if (!isLast(currentIdx)) {
+                updateDelayAfter(targetIdx, 2);
+            }
+            return false;
+        }
+        return true;
     }
 
     private int selectTarget(int index) {
@@ -47,32 +87,40 @@ public class Lane {
         return index;
     }
 
-    private boolean notNeedEnter(int currentIdx, int targetIdx) {
+    private boolean needSkip(int currentIdx, int targetIdx) {
         return targetIdx == (currentIdx - 1)
                 && target.isStrike()
                 && getFrameAfter(currentIdx, 0).isStrike();
     }
 
-    private void enterCurrentScore(int targetIdx) {
-        if (target.isStrike() || target.isSpare()) {
+    private void updateCurrentInfo(int targetIdx) {
+
+        if (canGetBonus()) {
+
+            if (isLast(targetIdx)) {
+                return;
+            }
             updateDelayAfter(targetIdx, 1);
+
         } else {
             target.calScore();
         }
     }
 
-    private void enterPastScore(int targetIdx) {
+    private void updatePastInfo(int targetIdx) {
         if (target.isSpare()) {
             enterSpareScore(targetIdx);
+
         } else {
             enterStrikeScore(targetIdx);
         }
+        updateDelayAfter(targetIdx, 1);
+
     }
 
     private void enterSpareScore(int targetIdx) {
         int bonus = getFrameAfter(targetIdx, 1).getFirstPoint();
         target.calScore(bonus);
-        updateDelayAfter(targetIdx, 1);
     }
 
     private void enterStrikeScore(int targetIdx) {
@@ -88,7 +136,25 @@ public class Lane {
         }
 
         target.calScore(firstBonus, secondBonus);
-        updateDelayAfter(targetIdx, 1);
+    }
+
+    private void addBonusFrame(int currentIdx) {
+        if (isLast(currentIdx) && canGetBonus()) {
+
+            if (target.isSpare()) {
+                frames.add(new BonusFrame(true));
+            } else {
+                frames.add(new BonusFrame());
+            }
+        }
+    }
+
+    private boolean isLast(int currentIdx) {
+        return currentIdx >= frames.size() - 1;
+    }
+
+    private boolean canGetBonus() {
+        return target.isStrike() || target.isSpare();
     }
 
     private Frame getFrameAfter(int idx, int step) {
