@@ -1,8 +1,9 @@
 package src.main.bowling;
 
-import src.main.bowling.record.Player;
 import src.main.bowling.io.Input;
 import src.main.bowling.io.Output;
+import src.main.bowling.record.Frame;
+import src.main.bowling.record.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,5 +28,28 @@ public class Game {
         for (int each = 0; each < participantsNum; each++) {
             info.add(new Player());
         }
+    }
+
+    private void shot(int laneNum, int frameIdx) {
+
+        Frame currentFrame = info.get(laneNum - 1).getFrames().get(frameIdx);
+
+        int firstPoint = input.receiveKnockedPin();
+        currentFrame.setFirstPoint(firstPoint);
+
+        if (currentFrame.isStrike()) {
+            currentFrame.setSecondPoint(0);
+            return;
+        }
+
+        int secondPoint = input.receiveKnockedPin();
+        currentFrame.setSecondPoint(secondPoint);
+    }
+
+    private void calculate(int laneNum, int frameIdx) {
+
+        Player currentLane = info.get(laneNum - 1);
+        currentLane.doAfterFrame(frameIdx);
+
     }
 }
