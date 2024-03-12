@@ -94,14 +94,14 @@ public class Frame {
 
     public String convertSecondMark() {
 
-        if (!isDone(firstPoint)) {
+        if (!isDone(secondPoint)) {
             return " ";
         } else if (isGutter(secondPoint)) {
             return GUTTER;
         } else if (isSpare()) {
             return SPARE;
         } else {
-            return "" + firstPoint;
+            return "" + secondPoint;
         }
     }
 
