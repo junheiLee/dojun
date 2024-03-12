@@ -36,7 +36,7 @@ public class Game {
         for (Lane lane : lanes) {
             if (lane.hasBonusFrame()) {
                 shot(lane.getBonusFrame());
-                lane.doAfterBonusFrame();
+                lane.addUpBonus();
             }
         }
 
@@ -84,6 +84,6 @@ public class Game {
     }
 
     private void arrange(Lane lane, int frameIdx) {
-        lane.doAfterFrame(frameIdx);
+        lane.doAfterFrame(frameIdx).addBonusFrame(frameIdx);
     }
 }

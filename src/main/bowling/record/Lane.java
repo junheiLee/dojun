@@ -7,6 +7,7 @@ import java.util.List;
 public class Lane {
 
     private static final List<Frame> frames;
+    private static final int BONUS_IDX = 10;
     private static final int LAST_IDX = 9;
     private static final int SECOND_LAST_IDX = 8;
 
@@ -24,7 +25,7 @@ public class Lane {
         return Collections.unmodifiableList(frames);
     }
 
-    public void doAfterFrame(int currentIdx) {
+    public Lane doAfterFrame(int currentIdx) {
         int targetIdx;
 
         while (isRunning(currentIdx, selectTarget(currentIdx))) {
@@ -38,31 +39,7 @@ public class Lane {
                 updatePastInfo(targetIdx);
             }
         }
-        addBonusFrame(currentIdx);
-    }
-
-    public boolean hasBonusFrame() {
-        return frames.size() > 10;
-    }
-
-    public BonusFrame getBonusFrame() {
-        return (BonusFrame) frames.get(10);
-    }
-
-    public void doAfterBonusFrame() {
-        Frame bonusFrame = getBonusFrame();
-        Frame target = frames.get(LAST_IDX);
-
-        if (target.isSpare()) {
-            target.calScore(bonusFrame.getFirstPoint());
-        } else {
-            target.calScore(bonusFrame.getFirstPoint(), bonusFrame.getSecondPoint());
-        }
-
-        if (target.hasDelay()) {
-            frames.get(SECOND_LAST_IDX).calScore(target.getFirstPoint(), bonusFrame.getFirstPoint());
-        }
-
+        return this;
     }
 
     private boolean isRunning(int currentIdx, int targetIdx) {
@@ -138,7 +115,7 @@ public class Lane {
         target.calScore(firstBonus, secondBonus);
     }
 
-    private void addBonusFrame(int currentIdx) {
+    public void addBonusFrame(int currentIdx) {
         if (isLast(currentIdx) && canGetBonus()) {
 
             if (target.isSpare()) {
@@ -147,6 +124,30 @@ public class Lane {
                 frames.add(new BonusFrame());
             }
         }
+    }
+
+    public boolean hasBonusFrame() {
+        return frames.size() > BONUS_IDX;
+    }
+
+    public BonusFrame getBonusFrame() {
+        return (BonusFrame) frames.get(BONUS_IDX);
+    }
+
+    public void addUpBonus() {
+        Frame bonusFrame = getBonusFrame();
+        Frame target = frames.get(LAST_IDX);
+
+        if (target.isSpare()) {
+            target.calScore(bonusFrame.getFirstPoint());
+        } else {
+            target.calScore(bonusFrame.getFirstPoint(), bonusFrame.getSecondPoint());
+        }
+
+        if (target.hasDelay()) {
+            frames.get(SECOND_LAST_IDX).calScore(target.getFirstPoint(), bonusFrame.getFirstPoint());
+        }
+
     }
 
     private boolean isLast(int currentIdx) {
