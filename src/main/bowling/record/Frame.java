@@ -8,14 +8,14 @@ public class Frame {
 
     private int firstPoint;
     private int secondPoint;
-    private int score;
     private boolean hasDelay;
+    private int score;
 
     {
         firstPoint = -1;
         secondPoint = -1;
-        score = -1;
         hasDelay = false;
+        score = -1;
     }
 
     public void setFirstPoint(int point) {
@@ -34,21 +34,6 @@ public class Frame {
         return secondPoint;
     }
 
-    public void calScore() {
-
-        this.score = firstPoint + secondPoint;
-    }
-
-    public void calScore(int onePoint) {
-
-        this.score = firstPoint + secondPoint + onePoint;
-    }
-
-    public void calScore(int onePoint, int twoPoint) {
-
-        this.score = firstPoint + secondPoint + onePoint + twoPoint;
-    }
-
     public void updateDelay() {
         this.hasDelay = !hasDelay;
     }
@@ -57,8 +42,16 @@ public class Frame {
         return this.hasDelay;
     }
 
-    public boolean isCompleted() {
-        return isDone(score);
+    public void calScore() {
+        this.score = firstPoint + secondPoint;
+    }
+
+    public void calScore(int bonus) {
+        this.score = firstPoint + secondPoint + bonus;
+    }
+
+    public void calScore(int firstBonus, int secondBonus) {
+        this.score = firstPoint + secondPoint + firstBonus + secondBonus;
     }
 
     public boolean isSpare() {
@@ -69,10 +62,6 @@ public class Frame {
 
     public boolean isStrike() {
         return firstPoint == 10;
-    }
-
-    private boolean isDone(int point) {
-        return point != -1;
     }
 
     private boolean isGutter(int shotPoint) {
@@ -111,4 +100,13 @@ public class Frame {
         }
         return " ";
     }
+
+    private boolean isCompleted() {
+        return isDone(score);
+    }
+
+    private boolean isDone(int point) {
+        return point != -1;
+    }
+
 }

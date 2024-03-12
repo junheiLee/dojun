@@ -1,7 +1,7 @@
 package src.main.bowling.io;
 
 import src.main.bowling.record.Frame;
-import src.main.bowling.record.Player;
+import src.main.bowling.record.Lane;
 
 import java.util.List;
 
@@ -12,30 +12,30 @@ public class Board {
     private static final String SHOT_SECTION = " %s|%s ";
     private static final String NUMBER_SECTION = " %3s ";
 
-    static String render(List<Player> participants) {
+    static String render(List<Lane> lanes) {
 
-        int lane = 1;
+        int laneNum = 1;
         StringBuilder board = new StringBuilder(ROW_SEPARATOR);
 
-        for (Player player : participants) {
+        for (Lane lane : lanes) {
 
             // 플레이어의 투구 정보에 해당하는 상단부
             board.append(" " + BLANK_SPACE + " ");
 
-            for (Frame frame : player.getFrames()) {
+            for (Frame frame : lane.getFrames()) {
                 board.append(String.format(SHOT_SECTION, frame.convertFirstMark(), frame.convertSecondMark())).append(" ");
             }
             board.append(BLANK_SPACE + " " + "\n");
 
             // 플레이어의 레인과 점수 정보에 해당하는 하단부
-            board.append(" ").append(String.format(NUMBER_SECTION, lane)).append(" ");
+            board.append(" ").append(String.format(NUMBER_SECTION, laneNum)).append(" ");
 
-            for (Frame frame : player.getFrames()) {
+            for (Frame frame : lane.getFrames()) {
                 board.append(String.format(NUMBER_SECTION, frame.convertScoreMark())).append(" ");
             }
             board.append(BLANK_SPACE + " " + ROW_SEPARATOR);
 
-            lane++;
+            laneNum++;
         }
 
         return board.toString();

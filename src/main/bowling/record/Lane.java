@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Player {
+public class Lane {
 
     private static final List<Frame> frames;
     private static Frame target;
@@ -22,7 +22,6 @@ public class Player {
     }
 
     public void doAfterFrame(int currentIdx) {
-
         int targetIdx = selectTarget(currentIdx);
 
         if (notNeedEnter(currentIdx, targetIdx)) {
@@ -39,7 +38,6 @@ public class Player {
     }
 
     private int selectTarget(int index) {
-
         target = frames.get(index);
 
         while (target.hasDelay()) {
@@ -50,7 +48,6 @@ public class Player {
     }
 
     private boolean notNeedEnter(int currentIdx, int targetIdx) {
-
         return targetIdx == (currentIdx - 1)
                 && target.isStrike()
                 && getFrameAfter(currentIdx, 0).isStrike();
@@ -73,21 +70,25 @@ public class Player {
     }
 
     private void enterSpareScore(int targetIdx) {
-        target.calScore(getFrameAfter(targetIdx, 1).getFirstPoint());
+        int bonus = getFrameAfter(targetIdx, 1).getFirstPoint();
+        target.calScore(bonus);
         updateDelayAfter(targetIdx, 1);
     }
 
     private void enterStrikeScore(int targetIdx) {
+        int firstBonus, secondBonus;
+
         if (!getFrameAfter(targetIdx, 1).isStrike()) {
-            target.calScore(getFrameAfter(targetIdx, 1).getFirstPoint(),
-                    getFrameAfter(targetIdx, 1).getSecondPoint());
-            updateDelayAfter(targetIdx, 1);
+            firstBonus = getFrameAfter(targetIdx, 1).getFirstPoint();
+            secondBonus = getFrameAfter(targetIdx, 1).getSecondPoint();
 
         } else {
-            target.calScore(getFrameAfter(targetIdx, 1).getFirstPoint(),
-                    frames.get(targetIdx + 2).getFirstPoint());
-            updateDelayAfter(targetIdx, 1);
+            firstBonus = getFrameAfter(targetIdx, 1).getFirstPoint();
+            secondBonus = getFrameAfter(targetIdx, 2).getFirstPoint();
         }
+
+        target.calScore(firstBonus, secondBonus);
+        updateDelayAfter(targetIdx, 1);
     }
 
     private Frame getFrameAfter(int idx, int step) {
