@@ -41,9 +41,18 @@ public class Game {
             currentFrame.setSecondPoint(0);
             return;
         }
+        output.render(Collections.unmodifiableList(info));
 
         int secondPoint = input.receiveKnockedPin();
-        currentFrame.setSecondPoint(secondPoint);
+        currentFrame.setSecondPoint(validSecondPoint(firstPoint, secondPoint));
+    }
+
+    private int validSecondPoint(int firstPoint, int secondPoint) {
+        if (10 < firstPoint + secondPoint) {
+            int newSecondPoint = input.receiveSecondPinAgain();
+            return validSecondPoint(firstPoint, newSecondPoint);
+        }
+        return secondPoint;
     }
 
     private void calculate(int laneNum, int frameIdx) {

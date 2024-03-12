@@ -9,6 +9,8 @@ public class Input {
     private final static String GUIDE_KNOCKED_PIN_INPUT = "쓰러뜨린 볼링 핀 개수를 입력하세요 : ";
     private final static String GUIDE_CORRECT_INPUT = "숫자로 입력하세요.";
     private final static String GUIDE_VALIDATION_PIN = "0이상 10이하만 가능합니다.";
+    private final static String GUIDE_VALIDATION_SECOND_PIN = "첫 투구와의 합이 10 이하여야 합니다.";
+
 
     public int receiveParticipants() {
         System.out.println(GUIDE_PARTICIPANT_INPUT);
@@ -17,6 +19,11 @@ public class Input {
 
     public int receiveKnockedPin() {
         System.out.println(GUIDE_KNOCKED_PIN_INPUT);
+        return validPinNum(receive());
+    }
+
+    public int receiveSecondPinAgain() {
+        System.out.println(GUIDE_VALIDATION_SECOND_PIN);
         return validPinNum(receive());
     }
 
