@@ -6,14 +6,14 @@ import java.util.List;
 
 public class Lane {
 
-    private static final List<Frame> frames;
-    private static final int BONUS_IDX = 10;
-    private static final int LAST_IDX = 9;
+    static final int BONUS_IDX = 10;
+    static final int LAST_IDX = 9;
     private static final int SECOND_LAST_IDX = 8;
 
-    private static Frame target;
+    private final List<Frame> frames;
+    private Frame target;
 
-    static {
+    {
         frames = new ArrayList<>();
 
         for (int frame = 0; frame < 10; frame++) {

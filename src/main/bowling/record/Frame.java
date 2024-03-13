@@ -18,16 +18,6 @@ public class Frame {
         score = -1;
     }
 
-    @Override
-    public String toString() {
-        return "Frame{" +
-                "firstPoint=" + firstPoint +
-                ", secondPoint=" + secondPoint +
-                ", hasDelay=" + hasDelay +
-                ", score=" + score +
-                '}';
-    }
-
     public void setFirstPoint(int point) {
         this.firstPoint = point;
 
@@ -82,7 +72,7 @@ public class Frame {
         return shotPoint == 0;
     }
 
-    public String convertFirstMark() {
+    String convertFirstMark() {
 
         if (!isDone(firstPoint)) {
             return " ";
@@ -95,7 +85,7 @@ public class Frame {
         }
     }
 
-    public String convertSecondMark() {
+    String convertSecondMark() {
 
         if (!isDone(secondPoint)) {
             return " ";
@@ -108,11 +98,8 @@ public class Frame {
         }
     }
 
-    public String convertScoreMark() {
-        if (isDone(score)) {
-            return "" + score;
-        }
-        return " ";
+    int getScore() {
+        return score;
     }
 
     private boolean isDone(int point) {

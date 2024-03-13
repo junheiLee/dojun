@@ -29,7 +29,7 @@ public class Input {
 
     private int receive() {
         Scanner sc = new Scanner(System.in);
-        int number = 0;
+        int number;
 
         try {
             number = sc.nextInt();
