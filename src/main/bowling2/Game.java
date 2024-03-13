@@ -1,11 +1,11 @@
 package src.main.bowling2;
 
-import src.main.bowling2.score.Lane;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
+
+import static src.main.bowling2.util.Const.BONUS_FRAME_IDX;
 
 public class Game {
 
@@ -15,7 +15,7 @@ public class Game {
 
     private static final List<Lane> lanes = new ArrayList<>();
 
-    Game() {
+    public Game() {
         System.out.print(INPUT_MSG);
         init();
     }
@@ -28,8 +28,7 @@ public class Game {
             System.out.println(NUMBER_MSG);
             input = sc.nextLine();
 
-        } while (isValid(input));
-
+        } while (!isValid(input));
         int laneSize = Integer.parseInt(input.trim());
 
         for (int laneIdx = 0; laneIdx < laneSize; laneIdx++) {
@@ -39,6 +38,25 @@ public class Game {
 
     private boolean isValid(String input) {
         return Pattern.matches(NUMBER_PATTERN, input);
+    }
+
+    public void execute() {
+
+        for (int frameIdx = 0; frameIdx <= 10; frameIdx++) {
+
+            doFrame(frameIdx);
+        }
+    }
+
+    private void doFrame(int frameIdx) {
+
+        for (Lane lane : lanes) {
+
+            if (frameIdx == BONUS_FRAME_IDX && lane.hasBonus()) {
+                //bonus 처리
+            }
+            lane.doFrame(frameIdx);
+        }
     }
 
 }

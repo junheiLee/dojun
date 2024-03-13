@@ -1,6 +1,6 @@
 package src.main;
 
-import src.main.bowling.Game;
+import src.main.bowling2.Game;
 
 public class Dojun {
 
