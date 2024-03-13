@@ -1,18 +1,18 @@
-package src.main.bowling2;
+package src.main.bowling2.score;
 
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class Shot {
 
-    private static final String INPUT_MSG = "쓰러뜨린 핀을 입력하세요.";
+    private static final String INPUT_MSG = "쓰러뜨린 핀을 ";
     private static final String OVER_SHOT_RANGE_MSG = "0부터 10 사이의 숫자로 입력하세요.";
     private static final String NUMBER_PATTERN = "^[\\d]*$";
 
     private int knockedPin = -1;
 
-    public Shot() {
-        System.out.println(INPUT_MSG);
+    Shot() {
+        System.out.print(INPUT_MSG);
         init();
     }
 
@@ -23,23 +23,21 @@ public class Shot {
     private void init() {
         Scanner sc = new Scanner(System.in);
         String input;
-        boolean canInit = false;
 
         do {
             System.out.println(OVER_SHOT_RANGE_MSG);
             input = sc.nextLine();
-            canInit = isValid(input, canInit);
 
-        } while (canInit);
+        } while (isValid(input));
     }
 
-    private boolean isValid(String input, boolean canInit) {
+    private boolean isValid(String input) {
 
         if (Pattern.matches(NUMBER_PATTERN, input)) {
             knockedPin = Integer.parseInt(input);
-            canInit = knockedPin < 0 || 10 < knockedPin;
+            return knockedPin < 0 || 10 < knockedPin;
         }
-        return canInit;
+        return false;
     }
 
 }
