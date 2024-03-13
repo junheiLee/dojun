@@ -1,6 +1,8 @@
 package src.main.bowling2;
 
+import src.main.bowling2.score.Bonus;
 import src.main.bowling2.score.Frame;
+import src.main.bowling2.score.Mark;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,13 +27,15 @@ public class Lane {
         }
     }
 
-    void doFrame(int frameIdx) {
+    protected void doFrame(int frameIdx) {
         Frame frame = frames.get(frameIdx);
 
         while (frame.inProgress()) {
             shot(frame);
             // 정산
         }
+
+        tryGetBonus(frameIdx);
     }
 
     private void shot(Frame frame) {
@@ -70,7 +74,21 @@ public class Lane {
         return knockedPin;
     }
 
-    public boolean hasBonus() {
+    private void tryGetBonus(int frameIdx) {
+        if (frameIdx == BONUS_FRAME_IDX - 1) {
+            Frame frame = frames.get(frameIdx);
+
+            if (frame.isSpare()) {
+                frames.add(new Bonus(Mark.SPARE));
+            }
+            if (frame.isStrike()) {
+                frames.add(new Bonus(Mark.STRIKE));
+            }
+        }
+    }
+
+    public boolean hasBonusFrame() {
         return frames.size() == BONUS_FRAME_IDX + 1;
     }
+
 }

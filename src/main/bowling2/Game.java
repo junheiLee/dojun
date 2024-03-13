@@ -11,7 +11,7 @@ public class Game {
 
     private static final String INPUT_MSG = "참여 인원을 ";
     private static final String NUMBER_MSG = "숫자로 입력하세요.";
-    private static final String NUMBER_PATTERN = "^[\\d]*$";
+    private static final String NUMBER_PATTERN = "^[0-9]*$";
 
     private static final List<Lane> lanes = new ArrayList<>();
 
@@ -52,8 +52,8 @@ public class Game {
 
         for (Lane lane : lanes) {
 
-            if (frameIdx == BONUS_FRAME_IDX && lane.hasBonus()) {
-                //bonus 처리
+            if (frameIdx == BONUS_FRAME_IDX && !lane.hasBonusFrame()) {
+                break;
             }
             lane.doFrame(frameIdx);
         }
