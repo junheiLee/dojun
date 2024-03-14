@@ -55,7 +55,7 @@ public class Game {
         for (Lane lane : lanes) {
 
             if (frameIdx == BONUS_FRAME_IDX && !lane.hasBonusFrame()) {
-                break;
+                continue;
             }
             lane.doFrame(frameIdx);
         }
