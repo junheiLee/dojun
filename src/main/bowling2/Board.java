@@ -8,62 +8,53 @@ public class Board {
     private static final String ROW_SEPARATOR = "\n ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- \n";
     private static final String BLANK_SPACE = "      ";
     private static final String NUMBER_SECTION = "  %3s ";
-    private static final String LAST_SHOT_SECTION = "%s|%s|%s";
     private static final StringBuilder board = new StringBuilder();
 
-    private static List<Lane> lanes;
+    private static List<Player> players;
 
     private Board() {
     }
 
-    public static void init(List<Lane> lanes) {
-        Board.lanes = lanes;
+    public static void init(List<Player> players) {
+        Board.players = players;
     }
 
-    public static void render(boolean isEnd) {
+    public static void render() {
         board.setLength(0);
         board.append(ROW_SEPARATOR);
 
-        for (Lane lane : lanes) {
-            renderShotPoint(lane);
-            renderScore(isEnd, lane);
+        for (Player player : players) {
+            renderShotPoint(player);
+            renderScore(player);
         }
         System.out.println(board);
     }
 
-    private static void renderShotPoint(Lane lane) {
+    private static void renderShotPoint(Player player) {
         board.append(BLANK_SPACE);
 
-        for (int frameIdx = 0; frameIdx < 9; frameIdx++) {
-            board.append(lane.getMark(frameIdx));
+        for (int frameIdx = 0; frameIdx < 10; frameIdx++) {
+            board.append(player.getMark(frameIdx));
         }
-        board.append(lane.getLastMark()).append("\n");
+        board.append(BLANK_SPACE).append("\n");
     }
 
-    private static void renderScore(boolean isEnd, Lane lane) {
-        board.append(String.format(NUMBER_SECTION, lanes.indexOf(lane) + 1));
-        String scoreMark = "";
+    private static void renderScore(Player player) {
+        board.append(String.format(NUMBER_SECTION, players.indexOf(player) + 1));
+        String scoreMark;
+        String totalScore = "";
 
         for (int frameIdx = 0; frameIdx < 10; frameIdx++) {
 
-            if (lane.getScores().size() <= frameIdx) {
+            if (player.getScores().size() <= frameIdx) {
                 scoreMark = BLANK_SPACE;
             } else {
-                scoreMark = String.format(NUMBER_SECTION, lane.getScores().get(frameIdx));
+                scoreMark = String.format(NUMBER_SECTION, player.getScores().get(frameIdx));
+                totalScore = scoreMark;
             }
             board.append(scoreMark);
         }
-        appendSuffix(isEnd, scoreMark);
-    }
-
-    private static void appendSuffix(boolean isEnd, String scoreMark) {
-
-        if (isEnd) {
-            board.append(scoreMark).append(ROW_SEPARATOR);
-
-        } else {
-            board.append(BLANK_SPACE).append(ROW_SEPARATOR);
-        }
+        board.append(totalScore).append(ROW_SEPARATOR);
     }
 
 }

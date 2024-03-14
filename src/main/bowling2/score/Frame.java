@@ -5,11 +5,11 @@ import java.util.Collections;
 import java.util.List;
 
 import static src.main.bowling2.score.Situation.*;
+import static src.main.bowling2.util.Const.PERFECT_POINT;
 
 public class Frame {
 
     protected static final int MAX_POINTS_SIZE = 2;
-    private static final int PERFECT_POINT = 10;
 
     protected final List<Integer> points = new ArrayList<>();
     protected Situation situation = NONE;
@@ -53,9 +53,5 @@ public class Frame {
 
     public List<Integer> getPoints() {
         return Collections.unmodifiableList(points);
-    }
-
-    public int getPoint() {
-        return points.get(points.size() - 1);
     }
 }
