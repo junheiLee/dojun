@@ -13,11 +13,12 @@ public class Game {
     private static final String NUMBER_MSG = "숫자로 입력하세요.";
     private static final String NUMBER_PATTERN = "^[\\d]+$";
 
-    private static final List<Lane> lanes = new ArrayList<>();
+    private static final List<Player> PLAYERS = new ArrayList<>();
 
     public Game() {
         System.out.print(INPUT_MSG);
         init();
+        Board.init(PLAYERS);
     }
 
     private void init() {
@@ -32,7 +33,7 @@ public class Game {
         int laneSize = Integer.parseInt(input.trim());
 
         for (int laneIdx = 0; laneIdx < laneSize; laneIdx++) {
-            lanes.add(new Lane());
+            PLAYERS.add(new Player());
         }
     }
 
@@ -42,19 +43,20 @@ public class Game {
 
     public void execute() {
 
-        for (int frameIdx = 0; frameIdx <= 10; frameIdx++) {
+        for (int frameIdx = 0; frameIdx <= 10; frameIdx++) {// bonus업음
             doFrame(frameIdx);
         }
+        Board.render();
     }
 
     private void doFrame(int frameIdx) {
 
-        for (Lane lane : lanes) {
+        for (Player player : PLAYERS) {
 
-            if (frameIdx == BONUS_FRAME_IDX && !lane.hasBonusFrame()) {
-                break;
+            if (frameIdx == BONUS_FRAME_IDX && !player.hasBonusFrame()) {
+                continue;
             }
-            lane.doFrame(frameIdx);
+            player.doFrameCycle(frameIdx);
         }
     }
 

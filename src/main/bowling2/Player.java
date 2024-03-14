@@ -5,14 +5,14 @@ import src.main.bowling2.score.Frame;
 import src.main.bowling2.score.Situation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-import static src.main.bowling2.util.Const.BONUS_FRAME_IDX;
-import static src.main.bowling2.util.Const.ERROR_CODE;
+import static src.main.bowling2.util.Const.*;
 
-public class Lane {
+public class Player {
 
     private static final String INPUT_MSG = "쓰러뜨린 핀을 ";
     private static final String OVER_SHOT_RANGE_MSG = "0부터 10 사이의 숫자로 입력하세요.";
@@ -28,18 +28,19 @@ public class Lane {
         }
     }
 
-    protected void doFrame(int frameIdx) {
+    protected void doFrameCycle(int frameIdx) {
         Frame frame = frames.get(frameIdx);
 
         while (!frame.isDone()) {
-            shot(frame);
+            Board.render();
+            swing(frame);
             setLane();
         }
         tryGetBonus(frame);
     }
 
-    private void shot(Frame frame) {
-        int knockedPin = tryShot();
+    private void swing(Frame frame) {
+        int knockedPin = trySwing();
 
         if (!frame.isValid(knockedPin)) {
             System.out.println(OVER_MAX_POINT_MSG);
@@ -48,27 +49,27 @@ public class Lane {
         frame.savePoint(knockedPin);
     }
 
-    private int tryShot() {
+    private int trySwing() {
         System.out.print(INPUT_MSG);
         Scanner sc = new Scanner(System.in);
         int knockedPin;
 
         do {
             System.out.println(OVER_SHOT_RANGE_MSG);
-            knockedPin = validShot(sc.nextLine());
+            knockedPin = validSwing(sc.nextLine());
         } while (knockedPin == ERROR_CODE);
 
         return knockedPin;
     }
 
-    private int validShot(String input) {
+    private int validSwing(String input) {
 
         if (!Pattern.matches(NUMBER_PATTERN, input)) {
             return ERROR_CODE;
         }
         int knockedPin = Integer.parseInt(input);
 
-        if (knockedPin < 0 || 10 < knockedPin) {
+        if (knockedPin < 0 || PERFECT_POINT < knockedPin) {
             return ERROR_CODE;
         }
         return knockedPin;
@@ -101,15 +102,20 @@ public class Lane {
     }
 
     private int sumPoints(Frame target, List<Integer> pointsAfterTarget) {
-        return target.getTotalPoint()
+        int sum = target.getTotalPoint()
                 + pointsAfterTarget.stream().mapToInt(Integer::intValue).sum();
+
+        if (!scores.isEmpty()) {
+            sum += scores.get(scores.size() - 1);
+        }
+        return sum;
     }
 
     private boolean canEnterScore(Frame target, int pointsSize) {
         return Situation.canEnterScore(target.getSituation(), target.isDone(), pointsSize);
     }
 
-    private boolean isEnd() {
+    boolean isEnd() {
         return scores.size() == 10;
     }
 
@@ -125,6 +131,15 @@ public class Lane {
 
     public boolean hasBonusFrame() {
         return frames.size() == BONUS_FRAME_IDX + 1;
+    }
+
+    public List<Integer> getScores() {
+        return Collections.unmodifiableList(scores);
+    }
+
+    public String getMark(int frameIdx) {
+        Frame frame = frames.get(frameIdx);
+        return frame.getSituation().getMark(frame.getPoints());
     }
 
 }
