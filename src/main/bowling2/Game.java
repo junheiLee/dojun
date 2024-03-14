@@ -43,7 +43,6 @@ public class Game {
     public void execute() {
 
         for (int frameIdx = 0; frameIdx <= 10; frameIdx++) {
-
             doFrame(frameIdx);
         }
     }

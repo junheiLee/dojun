@@ -34,14 +34,6 @@ public class Frame {
         }
     }
 
-    @Override
-    public String toString() {
-        return "Frame{" +
-                "points=" + points +
-                ", situation=" + situation +
-                '}';
-    }
-
     public Situation getSituation() {
         return this.situation;
     }
@@ -62,6 +54,5 @@ public class Frame {
     public List<Integer> getPoints() {
         return Collections.unmodifiableList(points);
     }
-
 
 }

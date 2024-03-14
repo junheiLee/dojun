@@ -8,8 +8,12 @@ public class Bonus extends Frame {
     }
 
     @Override
-    public void savePoint(int knockedPin) {
-        super.points.add(knockedPin);
+    public boolean isDone() {
+        if (super.situation == Situation.SPARE) {
+            return super.points.size() == 1;
+        }
+
+        return super.points.size() == MAX_POINTS_SIZE;
     }
 
     @Override
@@ -18,12 +22,8 @@ public class Bonus extends Frame {
     }
 
     @Override
-    public boolean isDone() {
-        if (super.situation == Situation.SPARE) {
-            return super.points.size() == 1;
-        }
-
-        return super.points.size() == MAX_POINTS_SIZE;
+    public void savePoint(int knockedPin) {
+        super.points.add(knockedPin);
     }
 
 }

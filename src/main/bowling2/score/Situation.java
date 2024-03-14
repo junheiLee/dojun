@@ -20,4 +20,5 @@ public enum Situation {
         }
         return situation.requiredPointsSizeAfterFrame == pointsSize;
     }
+
 }

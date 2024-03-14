@@ -30,12 +30,11 @@ public class Lane {
 
     protected void doFrame(int frameIdx) {
         Frame frame = frames.get(frameIdx);
-        System.out.println(frameIdx);
+
         while (!frame.isDone()) {
             shot(frame);
             setLane();
         }
-
         tryGetBonus(frame);
     }
 
@@ -75,20 +74,6 @@ public class Lane {
         return knockedPin;
     }
 
-    private void tryGetBonus(Frame frame) {
-        int frameIdx = frames.indexOf(frame);
-        boolean canGetBonus = (frameIdx == (BONUS_FRAME_IDX - 1))
-                && frame.canGetBonus();
-
-        if (canGetBonus) {
-            frames.add(new Bonus(frame.getSituation()));
-        }
-    }
-
-    public boolean hasBonusFrame() {
-        return frames.size() == BONUS_FRAME_IDX + 1;
-    }
-
     private void setLane() {
         Frame target = frames.get(scores.size());
         List<Integer> pointsAfterTarget = getPointsAfterFrame(scores.size());
@@ -106,15 +91,6 @@ public class Lane {
         }
     }
 
-    private boolean isEnd() {
-        return scores.size() == 10;
-    }
-
-    private int sumPoints(Frame target, List<Integer> pointsAfterTarget) {
-        return target.getTotalPoint()
-                + pointsAfterTarget.stream().mapToInt(Integer::intValue).sum();
-    }
-
     private List<Integer> getPointsAfterFrame(int targetIdx) {
         List<Integer> pointsAfterFrame = new ArrayList<>();
 
@@ -124,8 +100,31 @@ public class Lane {
         return pointsAfterFrame;
     }
 
+    private int sumPoints(Frame target, List<Integer> pointsAfterTarget) {
+        return target.getTotalPoint()
+                + pointsAfterTarget.stream().mapToInt(Integer::intValue).sum();
+    }
+
     private boolean canEnterScore(Frame target, int pointsSize) {
         return Situation.canEnterScore(target.getSituation(), target.isDone(), pointsSize);
+    }
+
+    private boolean isEnd() {
+        return scores.size() == 10;
+    }
+
+    private void tryGetBonus(Frame frame) {
+        int frameIdx = frames.indexOf(frame);
+        boolean canGetBonus = (frameIdx == (BONUS_FRAME_IDX - 1))
+                && frame.canGetBonus();
+
+        if (canGetBonus) {
+            frames.add(new Bonus(frame.getSituation()));
+        }
+    }
+
+    public boolean hasBonusFrame() {
+        return frames.size() == BONUS_FRAME_IDX + 1;
     }
 
 }
