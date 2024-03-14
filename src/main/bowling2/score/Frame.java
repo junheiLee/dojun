@@ -12,7 +12,7 @@ public class Frame {
     private static final int PERFECT_POINT = 10;
 
     protected final List<Integer> points = new ArrayList<>();
-    protected Situation situation;
+    protected Situation situation = NONE;
 
     public boolean isDone() {
         return points.size() == MAX_POINTS_SIZE || getTotalPoint() == 10;
@@ -55,4 +55,7 @@ public class Frame {
         return Collections.unmodifiableList(points);
     }
 
+    public int getPoint() {
+        return points.get(points.size() - 1);
+    }
 }

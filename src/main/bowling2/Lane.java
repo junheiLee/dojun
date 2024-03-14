@@ -4,9 +4,7 @@ import src.main.bowling2.score.Bonus;
 import src.main.bowling2.score.Frame;
 import src.main.bowling2.score.Situation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static src.main.bowling2.util.Const.BONUS_FRAME_IDX;
@@ -21,6 +19,7 @@ public class Lane {
 
     private final List<Frame> frames = new ArrayList<>();
     private final List<Integer> scores = new ArrayList<>();
+    private final List<Integer> lastPoints = new ArrayList<>();
 
     {
         for (int frame = 0; frame < 10; frame++) {
@@ -32,7 +31,12 @@ public class Lane {
         Frame frame = frames.get(frameIdx);
 
         while (!frame.isDone()) {
+            Board.render(false);
             shot(frame);
+
+            if (frameIdx >= 9) {
+                lastPoints.add(frame.getPoint());
+            }
             setLane();
         }
         tryGetBonus(frame);
@@ -80,7 +84,12 @@ public class Lane {
         int score = sumPoints(target, pointsAfterTarget);
 
         while (canEnterScore(target, pointsAfterTarget.size())) {
-            scores.add(score);
+
+            if (scores.size() == 0) {
+                scores.add(score);
+            } else {
+                scores.add(score + scores.get(scores.size()-1));
+            }
 
             if (isEnd()) {
                 break;
@@ -109,7 +118,7 @@ public class Lane {
         return Situation.canEnterScore(target.getSituation(), target.isDone(), pointsSize);
     }
 
-    private boolean isEnd() {
+    boolean isEnd() {
         return scores.size() == 10;
     }
 
@@ -125,6 +134,20 @@ public class Lane {
 
     public boolean hasBonusFrame() {
         return frames.size() == BONUS_FRAME_IDX + 1;
+    }
+
+    public List<Integer> getScores() {
+        return Collections.unmodifiableList(scores);
+    }
+
+    public String getMark(int frameIdx) {
+        Frame frame = frames.get(frameIdx);
+        return frame.getSituation().getMark(frame.getPoints());
+    }
+
+    public String getLastMark() {
+        System.out.println(lastPoints.size());
+        return Situation.LAST.getLastMark(lastPoints);
     }
 
 }

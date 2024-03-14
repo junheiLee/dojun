@@ -18,6 +18,7 @@ public class Game {
     public Game() {
         System.out.print(INPUT_MSG);
         init();
+        Board.init(lanes);
     }
 
     private void init() {
@@ -45,6 +46,8 @@ public class Game {
         for (int frameIdx = 0; frameIdx <= 10; frameIdx++) {
             doFrame(frameIdx);
         }
+        Board.render(false);
+        Board.render(true);
     }
 
     private void doFrame(int frameIdx) {
