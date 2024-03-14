@@ -1,7 +1,10 @@
 package src.main.bowling2.score;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import static src.main.bowling2.score.Situation.*;
 
 public class Frame {
 
@@ -9,32 +12,45 @@ public class Frame {
     private static final int PERFECT_POINT = 10;
 
     protected final List<Integer> points = new ArrayList<>();
+    protected Situation situation;
 
-    public boolean inProgress() {
-        return points.size() < MAX_POINTS_SIZE;
+    public boolean isDone() {
+        return points.size() == MAX_POINTS_SIZE || getTotalPoint() == 10;
     }
 
     public boolean isValid(int knockedPin) {
-        return getTotalPoint() + knockedPin <= PERFECT_POINT;
+        return isDone() || getTotalPoint() + knockedPin <= PERFECT_POINT;
     }
 
     public void savePoint(int knockedPin) {
         points.add(knockedPin);
 
-        if (isStrike() && inProgress()) {
-            points.add(0);
+        if (points.size() == 1 && knockedPin == 10) {
+            situation = STRIKE;
+        } else if (getTotalPoint() == PERFECT_POINT) {
+            situation = SPARE;
+        } else {
+            situation = COMMON;
         }
     }
 
-    public boolean isStrike() {
-        return points.get(0) == PERFECT_POINT;
+    @Override
+    public String toString() {
+        return "Frame{" +
+                "points=" + points +
+                ", situation=" + situation +
+                '}';
     }
 
-    public boolean isSpare() {
-        return !isStrike() && (getTotalPoint() == PERFECT_POINT);
+    public Situation getSituation() {
+        return this.situation;
     }
 
-    private int getTotalPoint() {
+    public boolean canGetBonus() {
+        return situation == STRIKE || situation == SPARE;
+    }
+
+    public int getTotalPoint() {
         int sumPoint = 0;
 
         for (Integer point : points) {
@@ -42,5 +58,10 @@ public class Frame {
         }
         return sumPoint;
     }
+
+    public List<Integer> getPoints() {
+        return Collections.unmodifiableList(points);
+    }
+
 
 }

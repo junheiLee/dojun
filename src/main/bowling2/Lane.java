@@ -2,7 +2,7 @@ package src.main.bowling2;
 
 import src.main.bowling2.score.Bonus;
 import src.main.bowling2.score.Frame;
-import src.main.bowling2.score.Mark;
+import src.main.bowling2.score.Situation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +17,10 @@ public class Lane {
     private static final String INPUT_MSG = "쓰러뜨린 핀을 ";
     private static final String OVER_SHOT_RANGE_MSG = "0부터 10 사이의 숫자로 입력하세요.";
     private static final String OVER_MAX_POINT_MSG = "한 프레임의 투구의 합은 10을 넘을 수 없습니다.";
-    private static final String NUMBER_PATTERN = "^[\\d]*$";
+    private static final String NUMBER_PATTERN = "^[0-9]+$";
 
     private final List<Frame> frames = new ArrayList<>();
+    private final List<Integer> scores = new ArrayList<>();
 
     {
         for (int frame = 0; frame < 10; frame++) {
@@ -29,13 +30,13 @@ public class Lane {
 
     protected void doFrame(int frameIdx) {
         Frame frame = frames.get(frameIdx);
-
-        while (frame.inProgress()) {
+        System.out.println(frameIdx);
+        while (!frame.isDone()) {
             shot(frame);
-            // 정산
+            setLane();
         }
 
-        tryGetBonus(frameIdx);
+        tryGetBonus(frame);
     }
 
     private void shot(Frame frame) {
@@ -74,21 +75,57 @@ public class Lane {
         return knockedPin;
     }
 
-    private void tryGetBonus(int frameIdx) {
-        if (frameIdx == BONUS_FRAME_IDX - 1) {
-            Frame frame = frames.get(frameIdx);
+    private void tryGetBonus(Frame frame) {
+        int frameIdx = frames.indexOf(frame);
+        boolean canGetBonus = (frameIdx == (BONUS_FRAME_IDX - 1))
+                && frame.canGetBonus();
 
-            if (frame.isSpare()) {
-                frames.add(new Bonus(Mark.SPARE));
-            }
-            if (frame.isStrike()) {
-                frames.add(new Bonus(Mark.STRIKE));
-            }
+        if (canGetBonus) {
+            frames.add(new Bonus(frame.getSituation()));
         }
     }
 
     public boolean hasBonusFrame() {
         return frames.size() == BONUS_FRAME_IDX + 1;
+    }
+
+    private void setLane() {
+        Frame target = frames.get(scores.size());
+        List<Integer> pointsAfterTarget = getPointsAfterFrame(scores.size());
+        int score = sumPoints(target, pointsAfterTarget);
+
+        while (canEnterScore(target, pointsAfterTarget.size())) {
+            scores.add(score);
+
+            if (isEnd()) {
+                break;
+            }
+            target = frames.get(scores.size());
+            pointsAfterTarget = getPointsAfterFrame(scores.size());
+            score = sumPoints(target, pointsAfterTarget);
+        }
+    }
+
+    private boolean isEnd() {
+        return scores.size() == 10;
+    }
+
+    private int sumPoints(Frame target, List<Integer> pointsAfterTarget) {
+        return target.getTotalPoint()
+                + pointsAfterTarget.stream().mapToInt(Integer::intValue).sum();
+    }
+
+    private List<Integer> getPointsAfterFrame(int targetIdx) {
+        List<Integer> pointsAfterFrame = new ArrayList<>();
+
+        for (int idx = targetIdx + 1; idx < frames.size(); idx++) {
+            pointsAfterFrame.addAll(frames.get(idx).getPoints());
+        }
+        return pointsAfterFrame;
+    }
+
+    private boolean canEnterScore(Frame target, int pointsSize) {
+        return Situation.canEnterScore(target.getSituation(), target.isDone(), pointsSize);
     }
 
 }

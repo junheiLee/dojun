@@ -11,7 +11,7 @@ public class Game {
 
     private static final String INPUT_MSG = "참여 인원을 ";
     private static final String NUMBER_MSG = "숫자로 입력하세요.";
-    private static final String NUMBER_PATTERN = "^[0-9]*$";
+    private static final String NUMBER_PATTERN = "^[\\d]+$";
 
     private static final List<Lane> lanes = new ArrayList<>();
 
@@ -26,7 +26,7 @@ public class Game {
 
         do {
             System.out.println(NUMBER_MSG);
-            input = sc.nextLine();
+            input = sc.nextLine().trim();
 
         } while (!isValid(input));
         int laneSize = Integer.parseInt(input.trim());
